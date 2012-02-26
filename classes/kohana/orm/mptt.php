@@ -208,7 +208,8 @@ class Kohana_ORM_MPTT extends ORM {
 	}
 
 	/**
-	 * Creates a new node as root, or moves a node to root
+	 * Creates a new node as root, or moves a node to root. Also moves
+	 * existing children to the new root node.
 	 *
 	 * @access  public
 	 * @param   int       the new scope
@@ -220,13 +221,7 @@ class Kohana_ORM_MPTT extends ORM {
 		// If node already exists, and already root, exit
 		if ($this->loaded() AND $this->is_root())
 			return $this;
-
-		// delete node space first
-		if ($this->loaded())
-		{
-			$this->delete_space($this->left(), $this->size());
-		}
-
+		
 		if (is_null($scope))
 		{
 			// Increment next scope
@@ -236,13 +231,38 @@ class Kohana_ORM_MPTT extends ORM {
 		{
 			return FALSE;
 		}
-
+		
+		if ($this->loaded())
+		{
+			// move children as well
+			DB::update($this->_table_name)
+			->set(array($this->left_column => DB::expr($this->left_column.' - '.($this->left()-1))))
+			->set(array($this->right_column => DB::expr($this->right_column.' - '.($this->left()-1))))
+			->set(array($this->level_column => DB::expr($this->level_column.' - '.($this->level()-1))))
+			->set(array($this->scope_column => $scope))
+			->where($this->left_column, '>=', $this->left()+1)
+			->where($this->right_column, '<=', $this->right()-1)
+			->where($this->scope_column, '=', $this->scope())
+			->execute($this->_db);
+			
+			// delete node space
+			$this->delete_space($this->right(), $this->size());
+			
+			// set right before setting left
+			$this->{$this->right_column} = $this->size();
+			$this->{$this->left_column} = 1;
+		}
+		else
+		{
+			// set default values
+			$this->{$this->left_column} = 1;
+			$this->{$this->right_column} = 2;
+		}
+		
 		$this->{$this->scope_column} = $scope;
 		$this->{$this->level_column} = 1;
-		$this->{$this->left_column} = 1;
-		$this->{$this->right_column} = 2;
 		$this->{$this->parent_column} = NULL;
-
+		
 		return parent::save($validation);
 	}
 
