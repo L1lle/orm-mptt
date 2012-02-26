@@ -685,6 +685,11 @@ class Kohana_ORM_MPTT extends ORM {
 	 */
 	public function siblings($self = FALSE, $direction = 'ASC')
 	{
+		if ($this->is_root())
+		{
+			return array();
+		}
+		
 		$query = self::factory($this->object_name())
 			->where($this->left_column, '>', $this->parent->left())
 			->where($this->right_column, '<', $this->parent->right())
