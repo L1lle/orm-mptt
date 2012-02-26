@@ -475,7 +475,16 @@ class Kohana_ORM_MPTT extends ORM {
 		$parent_id = $this->{$this->parent_column};
 
 		// Make sure we have the most upto date version of this AFTER we lock
-		$this->lock();
+		/*
+		 * LOCK disabled because MySQL cannot select (ORM::reload) on a locked
+		 * table if no alias is used. Cannot integrate alias unlease the reload
+		 * function gets overriden here. Not a good idea. Should change this 
+		 * function to load objects first and then to the rest.
+		 * 
+		 * See http://dev.mysql.com/doc/refman/5.0/en/lock-tables.html 
+		 * 
+		 */
+		// $this->lock();
 		$this->reload();
 		 
 		// Catch any database or other excpetions and unlock
