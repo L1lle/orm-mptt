@@ -195,16 +195,12 @@ class Kohana_ORM_MPTT extends ORM {
 	 */
 	public function save(Validation $validation = NULL)
 	{
-		if ( ! $this->loaded())
+		if ( ! $this->loaded() AND is_null($this->left()) AND is_null($this->right()))
 		{
 			return $this->make_root($validation);
 		}
-		elseif ($this->loaded() === TRUE)
-		{
-			return parent::save($validation);
-		}
-
-		return FALSE;
+		
+		return parent::save($validation);
 	}
 
 	/**
@@ -263,7 +259,7 @@ class Kohana_ORM_MPTT extends ORM {
 		$this->{$this->level_column} = 1;
 		$this->{$this->parent_column} = NULL;
 		
-		return parent::save($validation);
+		return $this->save($validation);
 	}
 
 	/**
@@ -393,7 +389,7 @@ class Kohana_ORM_MPTT extends ORM {
 		 
 		try
 		{
-			parent::save();
+			$this->save();
 		}
 		catch (ORM_Validation_Exception $e)
 		{
