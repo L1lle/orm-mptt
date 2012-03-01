@@ -500,6 +500,12 @@ class Kohana_ORM_MPTT extends ORM {
 			{
 				$target->reload();
 			}
+			
+			// when moving a node from a differen scope inside this tree we make sure the scope matches
+			if ($this->scope() !== $target->scope())
+			{
+				$this->{$this->scope_column} = $target->scope();
+			}
 
 			// Stop $this being moved into a descendant or itself or disallow if target is root
 			if ($target->is_descendant($this)
