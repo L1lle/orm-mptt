@@ -746,7 +746,7 @@ class Kohana_ORM_MPTT extends ORM {
 	 */
 	public function leaves($self = FALSE, $direction = 'ASC')
 	{
-		return $this->descendants($self, $direction, TRUE, TRUE);
+		return $this->descendants($self, $direction, FALSE, TRUE);
 	}
 	
 	/**
