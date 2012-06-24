@@ -100,7 +100,7 @@ class Kohana_ORM_MPTT extends ORM {
 		return (
 				$this->{$this->left_column} > $target->{$target->left_column}
 				AND $this->{$this->right_column} < $target->{$target->right_column}
-				AND $this->{$this->scope_column} = $target->{$target->scope_column}
+				AND $this->{$this->scope_column} == $target->{$target->scope_column}
 			);
 	}
 
@@ -183,8 +183,15 @@ class Kohana_ORM_MPTT extends ORM {
 		{
 			$target = self::factory($this->object_name(), $target);
 		}
-
-		return $target->is_descendant($this);
+		
+		foreach ($target->parents(TRUE,TRUE) as $parent_node)
+		{
+			if ($parent_node->id == $this->id)
+			{
+				return TRUE;
+			}
+		}
+		return FALSE;
 	}
 
 	/**
