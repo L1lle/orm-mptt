@@ -23,9 +23,7 @@ class ORM_MPTT_Test extends Unittest_Database_TestCase {
 
 	public function getConnection()
 	{
-		$db_connection = Kohana::$config->load('unittest.db_connection');
-		$db_config = Kohana::$config->load('database.'.$db_connection);
-		Database::$default = $db_connection;
+		$db_config = Kohana::$config->load('database.'.Database::$default);
 		
 		if (strtolower($db_config['type']) == 'mysql' OR strtolower($db_config['type']) == 'mysqli')
 		{

@@ -29,6 +29,19 @@ Place module in /modules/ and include the call in your bootstrap.
 	$cat->clear(); // Clearing ORM object
 	$cat->name = 'Terminology';
 	$cat->insert_as_last_child($c1);
+
+### Running unit tests
+
+You need the test table inside your default database connection to run unit tests.
+
+	CREATE TABLE `test_orm_mptt` (
+		`id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+		`parent_id` INT UNSIGNED NULL,
+		`lft` INT UNSIGNED NOT NULL,
+		`rgt` INT UNSIGNED NOT NULL,
+		`lvl` INT UNSIGNED NOT NULL,
+		`scope` INT UNSIGNED NOT NULL
+	) ENGINE=INNODB;
  
 ### Authors 
  * Mathew Davies
@@ -37,4 +50,5 @@ Place module in /modules/ and include the call in your bootstrap.
  * Brotkin Ivan
  * Brandon Summers
  * Alexander Yakovlev
+ * Matthias Lill
 
